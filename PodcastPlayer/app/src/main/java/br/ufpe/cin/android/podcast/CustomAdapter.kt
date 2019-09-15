@@ -1,9 +1,11 @@
 package br.ufpe.cin.android.podcast
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.itemlista.view.*
 
@@ -21,6 +23,15 @@ class CustomAdapter(private val items: List<ItemFeed>, private val context: Cont
         val item = items[position]
         holder.title.text = item.title
         holder.date.text = item.pubDate
+        holder.title.setOnClickListener {
+            val intent = Intent(context, EpisodeDetailActivity::class.java)
+            intent.putExtra("title", item.title)
+            intent.putExtra("link", item.link)
+            intent.putExtra("pubDate", item.pubDate)
+            intent.putExtra("description", item.description)
+            intent.putExtra("downloadLink", item.downloadLink)
+            startActivity(context, intent, null)
+        }
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
