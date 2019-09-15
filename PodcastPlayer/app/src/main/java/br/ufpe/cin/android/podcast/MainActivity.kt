@@ -8,6 +8,7 @@ import br.ufpe.cin.android.podcast.database.ItemMapper
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import java.lang.Exception
 import java.net.URL
 
 class MainActivity : AppCompatActivity() {
@@ -21,12 +22,16 @@ class MainActivity : AppCompatActivity() {
 
     fun downloadXML() {
         doAsync {
-            val feed = URL("https://s3-us-west-1.amazonaws.com/podcasts.thepolyglotdeveloper.com/podcast.xml").readText()
-            val itemFeeds = Parser.parse(feed)
-
             val db = ItemDatabase.getInstance(this@MainActivity)
-            for (item in itemFeeds){
-                db!!.itemDAO().insert(ItemMapper.toModel(item))
+            try {
+                val feed =
+                    URL("https://s3-us-west-1.amazonaws.com/podcasts.thepolyglotdeveloper.com/podcast.xml").readText()
+                val itemFeeds = Parser.parse(feed)
+                for (item in itemFeeds) {
+                    db!!.itemDAO().insert(ItemMapper.toModel(item))
+                }
+            }catch (e: Exception){
+                println("app is offline")
             }
             val itemsFromDb = db!!.itemDAO().getAll().map{itemModel -> ItemMapper.toDTO(itemModel)}
 
